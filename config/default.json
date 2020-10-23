@@ -1,0 +1,5 @@
+{
+  "port": "4200",
+  "mongoUri": "mongodb+srv://workflow:YK3DeNMjjvUsK8Cn@cluster0.6nwcy.mongodb.net/workflow?retryWrites=true&w=majority",
+  "jwtSecret": "user secret"
+}
