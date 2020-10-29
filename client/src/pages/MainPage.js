@@ -1,19 +1,13 @@
-import React from 'react';
-import {useHistory} from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {useAuth} from "../hooks/auth.hook";
 
 export const MainPage = () => {
-  const history = useHistory();
+  useAuth();
 
-
-  const onClickHandler = () => {
-    console.log(1234);
-    history.push('/users');
-  }
+  useEffect(() => {
+  },[])
 
   return(
-    <>
-      <h1>MainPage</h1>
-      <button onClick={onClickHandler}>BTN</button>
-    </>
+    <h1>MainPage</h1>
   );
 }

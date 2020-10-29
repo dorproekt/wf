@@ -1,25 +1,37 @@
-import React, { useState, useCallback } from 'react';
+import React, {useState, useCallback, useEffect, useContext} from 'react';
+import {useMessage} from "../hooks/message.hook";
 import {useAuth} from "../hooks/auth.hook";
+import {AuthContext} from "../App";
+
 
 export const AuthPage = () => {
   const [form, setForm] = useState({email: '', password: ''});
-  const { login, isAuth, error, data, loading, isAuthenticated } = useAuth();
+  const {login, error} = useAuth();
+  const message = useMessage();
+  const auth = useContext(AuthContext);
 
   const clickHandler = useCallback(async (event) => {
     event.preventDefault();
 
-    await login(form);
+    const userInfo = await login(form);
 
-  }, [form, login]);
+    if(userInfo && userInfo.hasOwnProperty('userId')){
+      auth.login();
+    }
+
+  }, [login, form, auth]);
+
+  useEffect(() => {
+    message(error);
+  }, [error, message]);
 
   const onChangeHandler = useCallback((e) => {
     setForm({...form, [e.target.name]: e.target.value})
   }, [setForm, form]);
 
-
   return (
     <>
-      <h2 className="center text">Система Електронного Документообігу { form.email } - { form.password }</h2>
+      <h2 className="center text">Система Електронного Документообігу</h2>
       <div className="row">
         <div className="col s4 offset-s4">
           <div className="input-field col s12">
@@ -43,11 +55,6 @@ export const AuthPage = () => {
             <label htmlFor="password">Password</label>
           </div>
           <a onClick={ clickHandler } href="/" className="waves-effect waves-light btn">Увійти</a>
-          <button>Check</button>
-          <p>{ error ? error.message : '' }</p>
-          <p>{ loading ? 'Loading...' : '' }</p>
-          <p>{ data ? data.token : '' }</p>
-          <p>{ isAuth ? 3333: '' }</p>
         </div>
       </div>
     </>

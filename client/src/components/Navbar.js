@@ -1,22 +1,22 @@
 import React from 'react';
-import {NavLink, useHistory} from 'react-router-dom';
+import {NavLink} from 'react-router-dom';
+import {useAuth} from "../hooks/auth.hook";
 
 export const Navbar = () =>{
-  const history = useHistory();
+  const {logout} = useAuth();
 
   const logoutHandler = event => {
     event.preventDefault();
-    history.push('/')
+    logout();
   }
 
   return (
     <nav>
-      <div className="nav-wrapper">
-        <a href="/" className="brand-logo">Сокращение ссылок</a>
+      <div className="nav-wrapper green" style={{padding:'0 20px'}}>
+        <a href="/" className="brand-logo">Документообіг</a>
         <ul id="nav-mobile" className="right hide-on-med-and-down">
-          <li><NavLink to="/users">Пользователи</NavLink></li>
-          <li><NavLink to="/links">Ссылки</NavLink></li>
-          <li><a href="/" onClick={logoutHandler}>Выйти</a></li>
+          <li><NavLink to="/users">Користувачі</NavLink></li>
+          <li><a href="/" onClick={logoutHandler}>Вийти</a></li>
         </ul>
       </div>
     </nav>
