@@ -1,32 +1,33 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import {BrowserRouter as Router} from "react-router-dom";
 import {useRoutes} from "./routes";
 import 'materialize-css';
-import {useAuth} from "./hooks/auth.hook";
 import {Navbar} from "./components/Navbar";
 
+export const AuthContext = React.createContext({});
 
 function App() {
-  const { allRoutes, authRoutes } = useRoutes();
-  const {isAuthenticated, isAuth} = useAuth();
-  const r1 = allRoutes();
-  const r2 = authRoutes();
+  const routes = useRoutes();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
 
   useEffect(() => {
-    isAuthenticated();
     window.M.updateTextFields();
-  }, [isAuthenticated]);
+  }, []);
+
+  const login = () => setIsAuthenticated(true);
+  const logout = () => setIsAuthenticated(false);
 
   return (
-    <Router>
-        { isAuth ? <Navbar /> : '' }
-      <div className='container'>
-        { isAuth ? r1 : r2 }
-      </div>
-    </Router>
+    <AuthContext.Provider value={{isAuthenticated, login, logout}}>
+      <Router>
+        { isAuthenticated ? <Navbar /> : ''}
+        <div className='container'>
+          { routes(isAuthenticated) }
+        </div>
+      </Router>
+    </AuthContext.Provider>
   );
-
-
 }
 
 export default App;
