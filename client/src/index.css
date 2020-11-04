@@ -1,1 +1,22 @@
 @import "~materialize-css/dist/css/materialize.min.css";
+
+.loader{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    right: 0;
+    opacity: .8;
+    background-color: aliceblue;
+    display: flex;
+    align-items: center;
+}
+
+.error{
+    background-color: #f44336;
+}
+
+.success{
+    background-color: #2bbbad;
+}

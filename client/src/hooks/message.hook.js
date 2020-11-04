@@ -2,9 +2,9 @@ import {useCallback} from 'react';
 
 export const useMessage = () => {
   return useCallback(
-    text => {
+    (text, classes = 'success') => {
       if(window.M && text){
-        window.M.toast({html: text});
+        window.M.toast({html: text, classes});
       }
     },
     []

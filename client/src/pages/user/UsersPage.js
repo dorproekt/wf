@@ -1,8 +1,6 @@
 import React from 'react';
-import {useAuth} from "../../hooks/auth.hook";
 
 export const UsersPage = () => {
-  useAuth();
   return (
     <>
       <h1>Список користувачів</h1>

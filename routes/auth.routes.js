@@ -35,22 +35,27 @@ router.post('/login', async (req, res) => {
 
     const {email, password} = req.body;
 
+    if(!email || !password){
+      return res.status(400).json({ message: 'Введіть дані' });
+    }
+
     const user = await User.findOne({ email });
 
     if(!user){
-      return res.status(400).json({ message: 'Пользователь не найден.' });
+      return res.status(400).json({ message: 'Користувача не знайдено' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if(!isMatch){
-      return res.status(400).json({ message: 'Не верный пароль, попробуйте еще раз' });
+      return res.status(400).json({ message: 'Не вірний пароль' });
     }
 
     const token = jwt.sign(
       { userId: user.id },
       config.get('jwtSecret'),
-      { expiresIn: '1h'}
+      // { expiresIn: '1h'}
+      { expiresIn: '1m'}
     );
 
     res.json({token, userId: user.id});
