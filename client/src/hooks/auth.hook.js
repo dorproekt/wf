@@ -13,7 +13,8 @@ export const useAuth = () => {
 
   const logout = useCallback(() => {
     localStorage.removeItem(storageName);
-  }, []);
+    authCont.setIsAuth(false);
+  }, [authCont]);
 
   const getToken = useCallback(() => {
     const storage = localStorage.getItem(storageName);
@@ -37,7 +38,7 @@ export const useAuth = () => {
           {},
           {Authorization: `Bearer ${token}`}
         ).then(res => {
-          console.log(res)
+
           if(res){
             if(res.hasOwnProperty('authorization')){
               authCont.setIsAuth(res.authorization);
@@ -51,7 +52,7 @@ export const useAuth = () => {
     }
 
 
-  }, [request, getToken, authCont]);
+  }, [request, getToken, authCont, logout]);
 
   return {login, logout, getToken, isAuth}
 }

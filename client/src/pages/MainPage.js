@@ -1,32 +1,12 @@
-import React, {useContext, useEffect} from 'react';
-import {authContext} from "../App";
-import {useHttp} from "../hooks/http.hook";
-import {Loader} from "../components/Loader";
+import React, {useEffect} from 'react';
+import {useAuth} from "../hooks/auth.hook";
 
 export const MainPage = () => {
-  const auth = useContext(authContext);
-  const {request, loading, error} = useHttp();
+  const {isAuth} = useAuth();
 
   useEffect(() => {
-    request('/api/test/')
-      .then(res => {
-        if(!res.isAuth){
-          auth.setIsAuth(false)
-        }
-      })
-  },[request, auth])
-
-  if(loading){
-    return(
-      <Loader />
-    );
-  }
-
-  if(error){
-    return (
-      <h3>{error.toString()}</h3>
-    )
-  }
+    isAuth();
+  }, [isAuth])
 
   return(
     <h1>Main page</h1>

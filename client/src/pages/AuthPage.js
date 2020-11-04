@@ -9,7 +9,7 @@ export const AuthPage = () => {
   const [form, setForm] = useState({email: '', password: ''});
   const { request, error, loading} = useHttp();
   const message = useMessage();
-  const {login, logout, getToken} = useAuth();
+  const {login, isAuth} = useAuth();
   const authCont = useContext(authContext);
 
   const clickHandler = useCallback(async (event) => {
@@ -31,31 +31,12 @@ export const AuthPage = () => {
   }, [setForm, form]);
 
   useEffect(() => {
-    const token = getToken();
-    if(token){
-      try{
-        request(
-          '/api/auth/authorization/',
-          'POST',
-          {},
-          {Authorization: `Bearer ${token}`}
-        ).then(res => {
-          console.log(res)
-          if(res){
-            if(res.hasOwnProperty('authorization')){
-              authCont.setIsAuth(res.authorization);
-            }
-          }else{
-            logout();
-          }
 
-        })
-      }catch (e) {}
-    }
+    isAuth();
 
     message(error, 'error');
     setForm({email: '', password: ''})
-  }, [error, message, getToken, request, authCont, logout]);
+  }, [error, message, isAuth]);
 
   if(loading){
     return <Loader />
