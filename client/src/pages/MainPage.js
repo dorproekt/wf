@@ -2,12 +2,13 @@ import React, {useEffect} from 'react';
 import {useAuth} from "../hooks/auth.hook";
 
 export const MainPage = () => {
-  useAuth();
+  const {isAuth} = useAuth();
 
   useEffect(() => {
-  },[])
+    isAuth();
+  }, [isAuth])
 
   return(
-    <h1>MainPage</h1>
+    <h1>Main page</h1>
   );
 }

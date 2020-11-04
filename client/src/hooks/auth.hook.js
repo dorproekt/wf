@@ -1,69 +1,58 @@
-import {useCallback, useContext, useEffect, useState} from 'react';
-import { useHttp } from '../hooks/http.hook';
-import {AuthContext} from "../App";
+import {useCallback, useContext} from "react";
+import {useHttp} from "./http.hook";
+import {authContext} from "../App";
 
-const storageName = 'userData';
+const storageName = 'userInfo';
 
 export const useAuth = () => {
-  const { request, error, loading, setError } = useHttp();
-  const [ isAuth, setIsAuth ] = useState(false);
-  const auth = useContext(AuthContext);
-
-  const login = useCallback(async infoUser => {
-
-    try{
-
-      const userInfo = await request('/api/auth/login/', 'POST', infoUser);
-
-      if(userInfo && userInfo.token){
-        localStorage.setItem(storageName, JSON.stringify(userInfo));
-        setIsAuth(true);
-        return userInfo;
-      }
-
-    }catch (e) {}
-
-  }, [request]);
+  const {request} = useHttp();
+  const authCont = useContext(authContext);
+  const login = (userInfo) => {
+    localStorage.setItem(storageName, JSON.stringify(userInfo));
+  }
 
   const logout = useCallback(() => {
     localStorage.removeItem(storageName);
-    auth.logout();
-  }, [auth]);
+    authCont.setIsAuth(false);
+  }, [authCont]);
 
-  const isAuthenticated = useCallback(async () => {
+  const getToken = useCallback(() => {
+    const storage = localStorage.getItem(storageName);
 
-    try{
-      const userInfo = JSON.parse(localStorage.getItem(storageName));
+    if(storage){
+      const data = JSON.parse(storage);
 
-      if(userInfo && userInfo.token) {
-        const response = await request(
+      if(data.hasOwnProperty('token')){
+        return data.token;
+      }
+    }
+  }, []);
+
+  const isAuth = useCallback(() => {
+    const token = getToken();
+    if(token){
+      try{
+        request(
           '/api/auth/authorization/',
           'POST',
           {},
-          {Authorization: `Bearer ${userInfo.token}`}
-        );
+          {Authorization: `Bearer ${token}`}
+        ).then(res => {
 
-        if(response.authorization){
-          setIsAuth(response.authorization);
-          auth.login();
-        }else{
-          auth.logout();
-        }
+          if(res){
+            if(res.hasOwnProperty('authorization')){
+              authCont.setIsAuth(res.authorization);
+            }
+          }else{
+            logout();
+          }
 
-      }else{
-        auth.logout();
-      }
-
-    }catch (e) {
-      setError(e);
+        })
+      }catch (e) {}
     }
 
-  }, [request, setError, auth]);
 
-  useEffect(() => {
-    isAuthenticated()
-  }, [isAuthenticated]);
+  }, [request, getToken, authCont, logout]);
 
-
-  return { isAuth, error, loading, login, logout, isAuthenticated };
+  return {login, logout, getToken, isAuth}
 }

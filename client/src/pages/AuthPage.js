@@ -1,33 +1,46 @@
 import React, {useState, useCallback, useEffect, useContext} from 'react';
+import {useHttp} from "../hooks/http.hook";
+import {Loader} from "../components/Loader";
 import {useMessage} from "../hooks/message.hook";
 import {useAuth} from "../hooks/auth.hook";
-import {AuthContext} from "../App";
-
+import {authContext} from "../App";
 
 export const AuthPage = () => {
   const [form, setForm] = useState({email: '', password: ''});
-  const {login, error} = useAuth();
+  const { request, error, loading} = useHttp();
   const message = useMessage();
-  const auth = useContext(AuthContext);
+  const {login, isAuth} = useAuth();
+  const authCont = useContext(authContext);
 
   const clickHandler = useCallback(async (event) => {
     event.preventDefault();
 
-    const userInfo = await login(form);
+    try {
+      const res = await request('/api/auth/login/', 'POST', form);
 
-    if(userInfo && userInfo.hasOwnProperty('userId')){
-      auth.login();
-    }
+      if(res.hasOwnProperty('token')){
+        login(res);
+        authCont.setIsAuth(true);
+      }
+    }catch (e){}
 
-  }, [login, form, auth]);
-
-  useEffect(() => {
-    message(error);
-  }, [error, message]);
+  }, [form, request, login, authCont]);
 
   const onChangeHandler = useCallback((e) => {
     setForm({...form, [e.target.name]: e.target.value})
   }, [setForm, form]);
+
+  useEffect(() => {
+
+    isAuth();
+
+    message(error, 'error');
+    setForm({email: '', password: ''})
+  }, [error, message, isAuth]);
+
+  if(loading){
+    return <Loader />
+  }
 
   return (
     <>
