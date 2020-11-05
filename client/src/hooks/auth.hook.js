@@ -5,7 +5,7 @@ import {authContext} from "../App";
 const storageName = 'userInfo';
 
 export const useAuth = () => {
-  const {request} = useHttp();
+  const {request, loading} = useHttp();
   const authCont = useContext(authContext);
   const login = (userInfo) => {
     localStorage.setItem(storageName, JSON.stringify(userInfo));
@@ -54,5 +54,5 @@ export const useAuth = () => {
 
   }, [request, getToken, authCont, logout]);
 
-  return {login, logout, getToken, isAuth}
+  return {login, logout, getToken, isAuth, loading}
 }
