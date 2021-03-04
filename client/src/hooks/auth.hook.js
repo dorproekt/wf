@@ -1,20 +1,20 @@
 import {useCallback, useContext} from "react";
 import {useHttp} from "./http.hook";
-import {authContext} from "../App";
+import {Context} from "../index";
 
 const storageName = 'userInfo';
 
 export const useAuth = () => {
   const {request} = useHttp();
-  const authCont = useContext(authContext);
+  const {user} = useContext(Context);
   const login = (userInfo) => {
     localStorage.setItem(storageName, JSON.stringify(userInfo));
   }
 
   const logout = useCallback(() => {
     localStorage.removeItem(storageName);
-    authCont.setIsAuth(false);
-  }, [authCont]);
+    user.setIsAuth(false);
+  }, [user]);
 
   const getToken = useCallback(() => {
     const storage = localStorage.getItem(storageName);
@@ -41,7 +41,7 @@ export const useAuth = () => {
 
           if(res){
             if(res.hasOwnProperty('authorization')){
-              authCont.setIsAuth(res.authorization);
+              user.setIsAuth(res.authorization);
             }
           }else{
             logout();
@@ -52,7 +52,7 @@ export const useAuth = () => {
     }
 
 
-  }, [request, getToken, authCont, logout]);
+  }, [request, getToken, user, logout]);
 
   return {login, logout, getToken, isAuth}
 }
