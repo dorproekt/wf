@@ -3,14 +3,15 @@ import {useHttp} from "../hooks/http.hook";
 import {Loader} from "../components/Loader";
 import {useMessage} from "../hooks/message.hook";
 import {useAuth} from "../hooks/auth.hook";
-import {authContext} from "../App";
+import {Context} from "../index";
+
 
 export const AuthPage = () => {
   const [form, setForm] = useState({email: '', password: ''});
   const { request, error, loading} = useHttp();
   const message = useMessage();
   const {login, isAuth} = useAuth();
-  const authCont = useContext(authContext);
+  const {user} = useContext(Context);
 
   const clickHandler = useCallback(async (event) => {
     event.preventDefault();
@@ -20,11 +21,11 @@ export const AuthPage = () => {
 
       if(res.hasOwnProperty('token')){
         login(res);
-        authCont.setIsAuth(true);
+        user.setIsAuth(true);
       }
     }catch (e){}
 
-  }, [form, request, login, authCont]);
+  }, [form, request, login, user]);
 
   const onChangeHandler = useCallback((e) => {
     setForm({...form, [e.target.name]: e.target.value})
